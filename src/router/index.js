@@ -1,22 +1,51 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import VueCookie from 'vue-cookie'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
-    component: Home
+    path: '/index',
+    name: 'lkxindex',
+    component: () => import('@/views'),
+    children: [
+      {
+        path: '/user',
+        name: 'userindex',
+        component: () => import('@/views/ums/user')
+      },
+      {
+        path: '/brand',
+        name: 'BrandIndex',
+        component: () => import('@/views/pms/brand')
+      },
+      {
+        path: '/role',
+        name: 'RoleIndex',
+        component: () => import('@/views/ums/role')
+      },
+      {
+        path: '/role/user',
+        name: 'RoleUser',
+        component: () => import('@/views/ums/guanlian/roleuser')
+      },
+      {
+        path: '/resource',
+        name: 'ResourceIndex',
+        component: () => import('@/views/ums/resource')
+      },
+      {
+        path: '/role/resource',
+        name: 'RoleResource',
+        component: () => import('@/views/ums/guanlian/roleresource')
+      }
+    ]
   },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    path: '/login',
+    name: 'LoginIndex',
+    component: () => import('@/views/login')
   }
 ]
 
@@ -25,5 +54,11 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
-
+router.beforeEach((to, from, next) => {
+  if (to.name === 'LoginIndex' || VueCookie.get('token')) {
+    next()
+    return
+  }
+  next('/login')
+})
 export default router
